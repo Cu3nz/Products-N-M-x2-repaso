@@ -55,7 +55,7 @@
                         <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                             <div class="flex items-center">
 
-                                <button wire:click="bajarStock(2)"
+                                <button wire:click="bajarStock({{$item -> id}})"
                                     class="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                     type="button">
                                     <span class="sr-only">Quantity button</span>
@@ -102,7 +102,7 @@
                             <button wire:click="pedirConfirmacion({{ $item->id }})" type="submit"><i
                                     class="fas fa-trash text-red-600"></i></button>
 
-                            <button wire:click="edit(2)"><i class="fas fa-edit text-yellow-600"></i></button>
+                            <button wire:click="edit({{$item -> id}})"><i class="fas fa-edit text-yellow-600"></i></button>
                         </td>
                     </tr>
                 @endforeach
@@ -143,7 +143,7 @@
 
             </x-slot>
             <x-slot name="footer">
-                <button wire:click="salirModalCreate"
+                <button wire:click="salirModalInfo"
                     class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                     <i class="fas fa-xmark"></i> CANCELAR
                 </button>
@@ -151,11 +151,96 @@
         </x-dialog-modal>
         @endisset
 
-        {{-- todo Modal info --}}
+    {{-- todo Fin de la modal para info --}}
 
+    {{-- todo MODAL PARA UPDATE --}}
 
+    @isset($form -> producto)
+    <x-dialog-modal>
+        <x-slot name="title">
+            Crear Producto
+        </x-slot>
+        <x-slot name="content">
 
+            <div class="mt-4 text-sm text-gray-600">
+                <label class="block font-medium text-sm text-gray-700" for="nombre">
+                    Nombre
+                </label>
+                <input class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                    id="nombre" placeholder="Nombre..." wire:model="form.nombre">
+                        <x-input-error for="form.nombre"></x-input-error>
+                
+                <label class="block font-medium text-sm text-gray-700 mt-4" for="descripcion">
+                    Descripción
+                </label>
+                <textarea id="descripcion" placeholder="Descripcion..." class="w-full" wire:model="form.descripcion"></textarea>
+                    <x-input-error for="form.descripcion"></x-input-error>
 
+                    <label class="block font-medium text-sm text-gray-700 mt-4" for="stock">
+                        Stock
+                    </label>
+                    <input class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                        type="number" id="stock" placeholder="Stock..." step="1" min="0"
+                        wire:model="form.stock">
+                    <x-input-error for="form.stock"></x-input-error>
+    
+                    <label class="block font-medium text-sm text-gray-700 mt-4" for="pvp">
+                        PVP (€)
+                    </label>
+                    <input class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                        type="number" id="pvp" placeholder="Pvp..." step="0.01" min="0" max="9999.99"
+                        wire:model="form.pvp">
+                    <x-input-error for="form.pvp"></x-input-error>
+
+                <label class="block font-medium text-sm text-gray-700 mt-4" for="tags">
+                    Etiquetas
+                </label>
+                <div class="flex flex-wrap">
+                       @foreach ($misTags as $item)
+                       <input id="{{$item -> id}}" wire:model="form.tags" type="checkbox" value="{{$item -> id}}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                       <label for="{{$item -> id}}" style="background-color: {{$item -> color}}" class="ms-2 text-sm font-medium text-gray-900 dark:text-black">{{$item -> nombre}}</label>
+                       @endforeach 
+                </div>
+                    <x-input-error for="form.tags"></x-input-error>
+                <label class="block font-medium text-sm text-gray-700 mt-4" for="imagenU">
+                    Imagen
+                </label>
+                <div class="relative w-full h-72 bg-gray-200 rounded">
+                    <input type="file" wire:model="imagen" accept="image/*" hidden id="imagenU" />
+                    <label for="imagenU"
+                        class="absolute bottom-2 end-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+                        <i class="fa-solid fa-upload mr-2"></i>Subir
+                    </label>
+                    @if ($form -> imagen)
+                    <img src="{{$form -> imagen -> temporaryUrl()}}"
+                        class="p-1 rounded w-full h-full br-no-repeat bg-cover bg-center" />
+                        @else
+                        <img src="{{Storage::url($form -> producto -> imagen)}}"
+                            class="p-1 rounded w-full h-full br-no-repeat bg-cover bg-center" />
+                    @endif
+                    <x-input-error for="form.imagenU"></x-input-error>
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <button wire:click="update" wire:loading.attr="disabled"
+                class="bg-blue-500 mr-2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-save"></i> GUARDAR
+            </button>
+
+            <button wire:click="salirModalUpdate"
+                class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-xmark"></i> CANCELAR
+            </button>
+
+        </x-slot>
+
+    </x-dialog-modal>
+    @endisset
+
+    {{-- todo FIN MODAL PARA UPDATE --}}
+    
 
     </x-propios.principal>
 

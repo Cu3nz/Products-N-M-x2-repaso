@@ -44,5 +44,8 @@
                 </x-button>
             </div>
         </form>
+        <div class="my-2">
+            <a href="{{route('github.redirect')}}">Registrarte con github</a>
+        </div>
     </x-authentication-card>
 </x-guest-layout>

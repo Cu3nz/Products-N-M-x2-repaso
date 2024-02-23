@@ -37,7 +37,7 @@
                         type="number" id="pvp" placeholder="Pvp..." step="0.01" min="0" max="9999.99"
                         wire:model="pvp">
                     <x-input-error for="pvp"></x-input-error>
-                <x-input-error for="descripcion"></x-input-error>
+                <x-input-error for="pvp"></x-input-error>
                 <label class="block font-medium text-sm text-gray-700 mt-4" for="tags">
                     Etiquetas
                 </label>

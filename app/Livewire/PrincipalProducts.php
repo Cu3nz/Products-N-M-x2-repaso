@@ -2,20 +2,33 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\UpdateForm;
+use App\Livewire\Forms\UpdateProduct;
 use App\Models\Product;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class PrincipalProducts extends Component
 {
 
     use WithPagination;
+    use WithFileUploads;
 
     //todo Para el info
     public Product $Producto;
     public bool $abrirModalInfo = false;
+
+
+    //todo Para el update 
+
+    public UpdateProduct $form;
+
+    public bool $abrirModalUpdate = false;
+
 
 
     public string $buscar="";
@@ -36,7 +49,8 @@ class PrincipalProducts extends Component
         })
         ->orderBy($this -> campo , $this -> orden)
         ->paginate(5);
-        return view('livewire.principal-products' , compact('productos'));
+        $misTags = Tag::select('id' , 'nombre' , 'color') -> orderBy('nombre') -> get();
+        return view('livewire.principal-products' , compact('productos' , 'misTags'));
     }
 
 
@@ -140,5 +154,32 @@ class PrincipalProducts extends Component
 
     }
 
+
+    public function edit(Product $product){
+
+        $this -> authorize('update' , $product);
+
+        $this -> form  -> setProducto($product) ;
+
+        $this -> abrirModalUpdate = true;
+
+    }
+
+
+    public function update(){
+        $this -> form -> editarProducto(); //* Este metodo esta definido en UpdateForm
+
+        $this -> salirModalUpdate();
+
+        $this -> dispatch('mensaje' , 'Producto actualizado');
+
+    }
+
+    public function salirModalUpdate(){
+        $this -> form -> limpiarCampos();
+
+        $this -> abrirModalUpdate = false;
+
+    }
 
 }
